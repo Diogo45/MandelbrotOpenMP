@@ -9,7 +9,7 @@
 # include <omp.h>
 
 using namespace std;
-int main();
+int main(int argc, char** argv);
 int i4_min(int i1, int i2);
 void i4pp_delete(int** a, int m, int n);
 int** i4pp_new(int m, int n);
@@ -17,7 +17,8 @@ void timestamp();
 
 //****************************************************************************80
 
-int main(void)
+int main(int argc, char** argv)
+
 
 //****************************************************************************80
 //
@@ -47,6 +48,13 @@ int main(void)
 //    for a particular pixel.
 //
 {
+
+    if (argc < 2) {
+        std::cout << "Number of threads missing!" << std::endl;
+    }
+
+    int nThreads = atoi(argv[1]);
+    std::cout << "Number of threads: " << nThreads << endl;
     int m = 4000;
     int n = 4000;
 
@@ -104,7 +112,7 @@ int main(void)
       Carry out the iteration for each pixel, determining COUNT.
     */
 
-    omp_set_num_threads(16);
+    omp_set_num_threads(1);
 
 # pragma omp parallel \
   shared ( b, count, count_max, g, r, x_max, x_min, y_max, y_min ) \
