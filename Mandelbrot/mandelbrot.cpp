@@ -103,14 +103,21 @@ int main(void)
     /*
       Carry out the iteration for each pixel, determining COUNT.
     */
+
+    omp_set_num_threads(16);
+
 # pragma omp parallel \
   shared ( b, count, count_max, g, r, x_max, x_min, y_max, y_min ) \
   private ( i, j, k, x, x1, x2, y, y1, y2 )
     {
 # pragma omp for
 
+     
         for (i = 0; i < m; i++)
         {
+            /*int tid = omp_get_thread_num();
+            printf("Hello %d\n", tid);*/
+
             for (j = 0; j < n; j++)
             {
                 x = ((double)(j - 1) * x_max
