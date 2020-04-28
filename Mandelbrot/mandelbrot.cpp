@@ -54,9 +54,15 @@ int main(int argc, char** argv)
     }
 
     int nThreads = atoi(argv[1]);
+    int xSize = atoi(argv[2]);
+    int ySize = atoi(argv[3]);
+
+    int debug = atoi(argv[4]);
+
+
     std::cout << "Number of threads: " << nThreads << endl;
-    int m = 4000;
-    int n = 4000;
+    int m = xSize;
+    int n = ySize;
 
     int** b;
     int c;
@@ -123,8 +129,12 @@ int main(int argc, char** argv)
      
         for (i = 0; i < m; i++)
         {
-            /*int tid = omp_get_thread_num();
-            printf("Hello %d\n", tid);*/
+            if (debug == 1)
+            {
+                int tid = omp_get_thread_num();
+                printf("Hello %d\n", tid);
+            }
+           
 
             for (j = 0; j < n; j++)
             {
