@@ -124,9 +124,9 @@ int main(int argc, char** argv)
   shared ( b, count, count_max, g, r, x_max, x_min, y_max, y_min ) \
   private ( i, j, k, x, x1, x2, y, y1, y2 )
     {
-# pragma omp for schedule(static)
+# pragma omp for schedule(guided)
 
-     
+
         for (i = 0; i < m; i++)
         {
             if (debug == 1)
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
                 int tid = omp_get_thread_num();
                 printf("Hello %d\n", tid);
             }
-           
+
 
             for (j = 0; j < n; j++)
             {

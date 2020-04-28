@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mandelbrot.cpp" />
+    <ClCompile Include="mandelbrot_dynamic.cpp" />
+    <ClCompile Include="mandelbrot_guided.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
