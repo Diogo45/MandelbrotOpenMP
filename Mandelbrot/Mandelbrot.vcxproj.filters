@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mandelbrot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="mandelbrot_dynamic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mandelbrot_guided.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

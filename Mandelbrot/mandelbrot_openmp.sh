@@ -1,6 +1,8 @@
 #! /bin/bash
 #
-g++ -fopenmp -g -Wall mandelbrot_openmp.cpp
+g++ -fopenmp -g -Wall mandelbrot_dynamic.cpp
+g++ -fopenmp -g -Wall mandelbrot.cpp
+g++ -fopenmp -g -Wall mandelbrot_guided.cpp
 if [ $? -ne 0 ]; then
   echo "Compile error."
   exit

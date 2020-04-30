@@ -49,186 +49,185 @@ int main(int argc, char** argv)
 //
 {
 
-    if (argc < 2) {
-        std::cout << "Number of threads missing!" << std::endl;
-    }
+	if (argc < 2) {
+		std::cout << "Number of threads missing!" << std::endl;
+	}
 
-    int nThreads = atoi(argv[1]);
-    int xSize = atoi(argv[2]);
-    int ySize = atoi(argv[3]);
+	int nThreads = atoi(argv[1]);
+	int xSize = atoi(argv[2]);
+	int ySize = atoi(argv[3]);
 
-    int debug = atoi(argv[4]);
+	int debug = atoi(argv[4]);
 
 
-    std::cout << "Number of threads: " << nThreads << endl;
-    int m = xSize;
-    int n = ySize;
+	std::cout << "Number of threads: " << nThreads << endl;
+	int m = xSize;
+	int n = ySize;
 
-    int** b;
-    int c;
-    int** count;
-    int count_max = 2000;
-    int** g;
-    int i;
-    int j;
-    int jhi;
-    int jlo;
-    int k;
-    string filename = "mandelbrot.ppm";
-    ofstream output;
-    int** r;
-    double wtime;
-    double x_max = 1.25;
-    double x_min = -2.25;
-    double x;
-    double x1;
-    double x2;
-    double y_max = 1.75;
-    double y_min = -1.75;
-    double y;
-    double y1;
-    double y2;
+	int** b;
+	int c;
+	int** count;
+	int count_max = 2000;
+	int** g;
+	int i;
+	int j;
+	int jhi;
+	int jlo;
+	int k;
+	string filename = "mandelbrot.ppm";
+	ofstream output;
+	int** r;
+	double wtime;
+	double x_max = 1.25;
+	double x_min = -2.25;
+	double x;
+	double x1;
+	double x2;
+	double y_max = 1.75;
+	double y_min = -1.75;
+	double y;
+	double y1;
+	double y2;
 
-    b = i4pp_new(m, n);
-    count = i4pp_new(m, n);
-    g = i4pp_new(m, n);
-    r = i4pp_new(m, n);
+	b = i4pp_new(m, n);
+	count = i4pp_new(m, n);
+	g = i4pp_new(m, n);
+	r = i4pp_new(m, n);
 
-    timestamp();
-    std::cout << "\n";
-    std::cout << "MANDELBROT_OPENMP\n";
-    std::cout << "  C++/OpenMP version\n";
-    std::cout << "\n";
-    std::cout << "  Create an ASCII PPM image of the Mandelbrot set.\n";
-    std::cout << "\n";
-    std::cout << "  For each point C = X + i*Y\n";
-    std::cout << "  with X range [" << x_min << "," << x_max << "]\n";
-    std::cout << "  and  Y range [" << y_min << "," << y_max << "]\n";
-    std::cout << "  carry out " << count_max << " iterations of the map\n";
-    std::cout << "  Z(n+1) = Z(n)^2 + C.\n";
-    std::cout << "  If the iterates stay bounded (norm less than 2)\n";
-    std::cout << "  then C is taken to be a member of the set.\n";
-    std::cout << "\n";
-    std::cout << "  An ASCII PPM image of the set is created using\n";
-    std::cout << "    M = " << m << " pixels in the X direction and\n";
-    std::cout << "    N = " << n << " pixels in the Y direction.\n";
+	timestamp();
+	std::cout << "\n";
+	std::cout << "MANDELBROT_OPENMP\n";
+	std::cout << "  C++/OpenMP version\n";
+	std::cout << "\n";
+	std::cout << "  Create an ASCII PPM image of the Mandelbrot set.\n";
+	std::cout << "\n";
+	std::cout << "  For each point C = X + i*Y\n";
+	std::cout << "  with X range [" << x_min << "," << x_max << "]\n";
+	std::cout << "  and  Y range [" << y_min << "," << y_max << "]\n";
+	std::cout << "  carry out " << count_max << " iterations of the map\n";
+	std::cout << "  Z(n+1) = Z(n)^2 + C.\n";
+	std::cout << "  If the iterates stay bounded (norm less than 2)\n";
+	std::cout << "  then C is taken to be a member of the set.\n";
+	std::cout << "\n";
+	std::cout << "  An ASCII PPM image of the set is created using\n";
+	std::cout << "    M = " << m << " pixels in the X direction and\n";
+	std::cout << "    N = " << n << " pixels in the Y direction.\n";
 
-    wtime = omp_get_wtime();
-    /*
-      Carry out the iteration for each pixel, determining COUNT.
-    */
+	wtime = omp_get_wtime();
+	/*
+	  Carry out the iteration for each pixel, determining COUNT.
+	*/
 
-    omp_set_num_threads(nThreads);
+	omp_set_num_threads(nThreads);
 
 # pragma omp parallel \
   shared ( b, count, count_max, g, r, x_max, x_min, y_max, y_min ) \
   private ( i, j, k, x, x1, x2, y, y1, y2 )
-    {
+	{
 # pragma omp for schedule(dynamic)
 
 
-        for (i = 0; i < m; i++)
-        {
-            if (debug == 1)
-            {
-                int tid = omp_get_thread_num();
-                printf("Hello %d\n", tid);
-            }
+		for (i = 0; i < m; i++)
+		{
+			if (debug == 1)
+			{
+				int tid = omp_get_thread_num();
+				printf("Hello %d\n", tid);
+			}
 
+			for (j = 0; j < n; j++)
+			{
+				x = ((double)(j - 1) * x_max
+					+ (double)(m - j) * x_min)
+					/ (double)(m - 1);
 
-            for (j = 0; j < n; j++)
-            {
-                x = ((double)(j - 1) * x_max
-                    + (double)(m - j) * x_min)
-                    / (double)(m - 1);
+				y = ((double)(i - 1) * y_max
+					+ (double)(n - i) * y_min)
+					/ (double)(n - 1);
 
-                y = ((double)(i - 1) * y_max
-                    + (double)(n - i) * y_min)
-                    / (double)(n - 1);
+				count[i][j] = 0;
 
-                count[i][j] = 0;
+				x1 = x;
+				y1 = y;
 
-                x1 = x;
-                y1 = y;
+				for (k = 1; k <= count_max; k++)
+				{
+					x2 = x1 * x1 - y1 * y1 + x;
+					y2 = 2 * x1 * y1 + y;
 
-                for (k = 1; k <= count_max; k++)
-                {
-                    x2 = x1 * x1 - y1 * y1 + x;
-                    y2 = 2 * x1 * y1 + y;
+					if (x2 < -2 || 2 < x2 || y2 < -1 || 1 < y2)
+					{
+						count[i][j] = k;
+						break;
+					}
+					x1 = x2;
+					y1 = y2;
+				}
 
-                    if (x2 < -2.0 || 2.0 < x2 || y2 < -2.0 || 2.0 < y2)
-                    {
-                        count[i][j] = k;
-                        break;
-                    }
-                    x1 = x2;
-                    y1 = y2;
-                }
+				if ((count[i][j] % 2) == 1)
+				{
+					r[i][j] = 255;
+					g[i][j] = 255;
+					b[i][j] = 255;
+				}
+				else
+				{
+					c = (int)(255.0 * sqrt(sqrt(sqrt(
+						((double)(count[i][j]) / (double)(count_max))))));
+					r[i][j] = 3 * c / 5;
+					g[i][j] = 3 * c / 5;
+					b[i][j] = c;
+				}
+			}
+		}
+	}
 
-                if ((count[i][j] % 2) == 1)
-                {
-                    r[i][j] = 255;
-                    g[i][j] = 255;
-                    b[i][j] = 255;
-                }
-                else
-                {
-                    c = (int)(255.0 * sqrt(sqrt(sqrt(
-                        ((double)(count[i][j]) / (double)(count_max))))));
-                    r[i][j] = 3 * c / 5;
-                    g[i][j] = 3 * c / 5;
-                    b[i][j] = c;
-                }
-            }
-        }
-    }
+	wtime = omp_get_wtime() - wtime;
+	std::cout << "\n";
+	std::cout << "  Time = " << wtime << " seconds.\n";
+	/*
+	  Write data to an ASCII PPM file.
+	*/
+	output.open(filename.c_str());
 
-    wtime = omp_get_wtime() - wtime;
-    std::cout << "\n";
-    std::cout << "  Time = " << wtime << " seconds.\n";
-    /*
-      Write data to an ASCII PPM file.
-    */
-    output.open(filename.c_str());
+	output << "P3\n";
+	output << n << "  " << m << "\n";
+	output << 255 << "\n";
+	for (i = 0; i < m; i++)
+	{
+		for (jlo = 0; jlo < n; jlo = jlo + 4)
+		{
+			jhi = i4_min(jlo + 4, n);
+			for (j = jlo; j < jhi; j++)
+			{
+				output << "  " << r[i][j]
+					<< "  " << g[i][j]
+					<< "  " << b[i][j] << "\n";
+			}
+			output << "\n";
+		}
+	}
 
-    output << "P3\n";
-    output << n << "  " << m << "\n";
-    output << 255 << "\n";
-    for (i = 0; i < m; i++)
-    {
-        for (jlo = 0; jlo < n; jlo = jlo + 4)
-        {
-            jhi = i4_min(jlo + 4, n);
-            for (j = jlo; j < jhi; j++)
-            {
-                output << "  " << r[i][j]
-                    << "  " << g[i][j]
-                    << "  " << b[i][j] << "\n";
-            }
-            output << "\n";
-        }
-    }
+	output.close();
+	std::cout << "\n";
+	std::cout << "  Graphics data written to \"" << filename << "\".\n";
+	/*
+	  Free memory.
+	*/
+	i4pp_delete(b, m, n);
+	i4pp_delete(count, m, n);
+	i4pp_delete(g, m, n);
+	i4pp_delete(r, m, n);
+	/*
+	  Terminate.
+	*/
+	std::cout << "\n";
+	std::cout << "MANDELBROT_OPENMP\n";
+	std::cout << "  Normal end of execution.\n";
+	std::cout << "\n";
+	timestamp();
 
-    output.close();
-    std::cout << "\n";
-    std::cout << "  Graphics data written to \"" << filename << "\".\n";
-    /*
-      Free memory.
-    */
-    i4pp_delete(b, m, n);
-    i4pp_delete(count, m, n);
-    i4pp_delete(g, m, n);
-    i4pp_delete(r, m, n);
-    /*
-      Terminate.
-    */
-    std::cout << "\n";
-    std::cout << "MANDELBROT_OPENMP\n";
-    std::cout << "  Normal end of execution.\n";
-    std::cout << "\n";
-    timestamp();
-
-    return 0;
+	return 0;
 }
 //****************************************************************************80
 
@@ -259,17 +258,17 @@ int i4_min(int i1, int i2)
 //    Output, int I4_MIN, the smaller of I1 and I2.
 //
 {
-    int value;
+	int value;
 
-    if (i1 < i2)
-    {
-        value = i1;
-    }
-    else
-    {
-        value = i2;
-    }
-    return value;
+	if (i1 < i2)
+	{
+		value = i1;
+	}
+	else
+	{
+		value = i2;
+	}
+	return value;
 }
 //****************************************************************************80
 
@@ -307,16 +306,16 @@ void i4pp_delete(int** a, int m, int n)
 //    Input, int M, N, the number of rows and columns in the array.
 //
 {
-    int i;
+	int i;
 
-    for (i = 0; i < m; i++)
-    {
-        delete[] a[i];
-    }
+	for (i = 0; i < m; i++)
+	{
+		delete[] a[i];
+	}
 
-    delete[] a;
+	delete[] a;
 
-    return;
+	return;
 }
 //****************************************************************************80
 
@@ -359,32 +358,32 @@ int** i4pp_new(int m, int n)
 //    Output, int **I4PP_NEW, a pointer to the pointers to the array.
 //
 {
-    int** a;
-    int i;
+	int** a;
+	int i;
 
-    a = new int* [m];
+	a = new int* [m];
 
-    if (a == NULL)
-    {
-        cerr << "\n";
-        cerr << "I4PP_NEW - Fatal error!\n";
-        cerr << "  Unable to allocate row pointer array.\n";
-        exit(1);
-    }
+	if (a == NULL)
+	{
+		cerr << "\n";
+		cerr << "I4PP_NEW - Fatal error!\n";
+		cerr << "  Unable to allocate row pointer array.\n";
+		exit(1);
+	}
 
-    for (i = 0; i < m; i++)
-    {
-        a[i] = new int[n];
-        if (a[i] == NULL)
-        {
-            cerr << "\n";
-            cerr << "I4PP_NEW - Fatal error!\n";
-            cerr << "  Unable to allocate row array.\n";
-            exit(1);
-        }
-    }
+	for (i = 0; i < m; i++)
+	{
+		a[i] = new int[n];
+		if (a[i] == NULL)
+		{
+			cerr << "\n";
+			cerr << "I4PP_NEW - Fatal error!\n";
+			cerr << "  Unable to allocate row array.\n";
+			exit(1);
+		}
+	}
 
-    return a;
+	return a;
 }
 //****************************************************************************80
 
@@ -419,17 +418,17 @@ void timestamp()
 {
 # define TIME_SIZE 40
 
-    static char time_buffer[TIME_SIZE];
-    const struct std::tm* tm_ptr;
-    std::time_t now;
+	static char time_buffer[TIME_SIZE];
+	const struct std::tm* tm_ptr;
+	std::time_t now;
 
-    now = std::time(NULL);
-    tm_ptr = std::localtime(&now);
+	now = std::time(NULL);
+	tm_ptr = std::localtime(&now);
 
-    std::strftime(time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm_ptr);
+	std::strftime(time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm_ptr);
 
-    std::cout << time_buffer << "\n";
+	std::cout << time_buffer << "\n";
 
-    return;
+	return;
 # undef TIME_SIZE
 }
